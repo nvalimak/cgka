@@ -43,6 +43,33 @@ const uchar CGkArray::versionFlag = 17;
 
 
 /**
+ * Returns a copy of an indexed read.
+ *
+ * Input: Read number (0-based)
+ * Output: Copy of the read. Caller must delete [] the buffer.
+ */ 
+uchar * CGkArray::getRead(unsigned readno) const
+{
+    // Position of the trailing '\0' byte in SA is at...
+    ulong i = readno;
+
+    unsigned l = getLength(readno);
+    uchar *text = new uchar[l]; // Length includes '\0' byte
+    text[--l] = 0;
+    ulong alphabetrank_i_tmp = 0;
+    uchar c  = alphabetrank->access(i, alphabetrank_i_tmp);
+    text[--l] = c;
+    while (l > 0)
+    {
+        i = C[c]+alphabetrank_i_tmp-1;
+        c = alphabetrank->access(i, alphabetrank_i_tmp);
+        text[--l] = c;  
+    }
+    return text;
+}
+
+
+/**
  * Given suffix i and substring length l, return T[SA[i] ... SA[i]+l].
  *
  * Caller must delete [] the buffer.
@@ -105,7 +132,7 @@ CGkArray::sa_range CGkArray::kmerToSARange(uchar const *kmer) const
  * that is, the k-mers in the read are traversed in backwards order.
  * This method allows to compute, for example, so called read-coverage profiles.
  *
- * Input: <internal pointer>, use initMoveLeft() to initialize.
+ * Input: <internal value>, use initMoveLeft() to initialize.
  * Output: Suffix array range of the preceeding read position
  */
 CGkArray::sa_range CGkArray::moveLeft(ulong &i) const
@@ -120,18 +147,58 @@ CGkArray::sa_range CGkArray::moveLeft(ulong &i) const
 }
 
 /**
+ * Move left operation for arbitrary patterns
+ *
+ * Allows an efficient way to step over each k-mer in any given string.
+ *
+ * Input: <internal pointer>, use initMoveLeft() to initialize, and
+ *        String that was used to initialize the internal pointer.
+ * Output: Suffix array range of the preceeding position. 
+ *         Range can be empty if the k-mer is not found in the index.
+ *         After the last step, subsequent calls return an empty SA range.
+ */
+CGkArray::sa_range CGkArray::moveLeft(CGkArray::internal_pointer &intp, uchar const *pattern) const
+{
+    sa_range &sar = intp.first;
+    unsigned &pos = intp.second;
+    if (pos == 0)
+        return make_pair(1,0); // End of pattern
+
+    --pos;
+    if (sar.first > sar.second)
+    { 
+        // Previous k-mer was not found in the index:
+        // restarting the search from the new pos
+        sar = kmerToSARange(pattern + pos);
+    }
+    else
+    {
+        // Previous SA range was valid:
+        // update with the next symbol
+        sar.first  = LF(pattern[pos], sar.first-1);
+        sar.second = LF(pattern[pos], sar.second)-1;
+        if (sar.first > sar.second)
+            return make_pair(1,0); // The k-mer at position pos was not found
+        // Truncate the search to k symbols
+        sar.first  = Blcp->prev(sar.first);
+        sar.second = Blcp->next(sar.second + 1) - 1;
+    }
+    return sar;
+}
+
+/**
  * Initialize move left
  *
- * Returns the SA range that corresponds to the end
+ * Returns an internal value that corresponds to the end
  * of the given read.
  *
  * Input: Read number
- * Output: <internal pointer>
+ * Output: <internal value>
  */
 ulong CGkArray::initMoveLeft(unsigned j) const
 {
     ulong i = j; // Position of the '\0' terminator of read j
-
+    
     // Move left over k-1 symbols
     unsigned k = gk - 1;
     ulong alphabetrank_i_tmp = 0;
@@ -144,6 +211,21 @@ ulong CGkArray::initMoveLeft(unsigned j) const
     return i;
 }
 
+/**
+ * Initialize move left for arbitrary pattern
+ *
+ * Returns <internal pointer> that corresponds to the end
+ * of the given read.
+ *
+ * Input: Arbitrary string, assuming '\0'-terminated
+ * Output: <internal pointer> that points to the last k-mer of the given pattern.
+ */
+CGkArray::internal_pointer CGkArray::initMoveLeft(uchar const *pattern) const
+{
+    unsigned pos = strlen((char const *)pattern) - gk + 1;
+    sa_range sar = kmerToSARange(pattern + pos);
+    return make_pair(sar, pos);
+}
 
 CGkArray::position_vector CGkArray::reportOccs(sa_range const &range) const
 {

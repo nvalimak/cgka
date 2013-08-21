@@ -59,6 +59,8 @@ public:
     typedef std::vector<position_result> position_vector;
     // Range of the suffix array
     typedef std::pair<ulong,ulong> sa_range;
+    // Internal pointer for move left (on arbitrary patterns)
+    typedef std::pair<sa_range,unsigned> internal_pointer;
 
     /**
      * Convert from text position to a pair of <read number, read position>
@@ -105,7 +107,7 @@ public:
     inline ulong getLength() const
     { return n; }
     // Return the length of the given read (including 0-terminator)
-    ulong getLength(unsigned i)
+    ulong getLength(unsigned i) const
     {
         CSA::DeltaVector::Iterator iter(*textStartPos);
         return iter.select(i+1) - iter.select(i);
@@ -144,21 +146,44 @@ public:
      * that is, the k-mers of the read are traversed in backwards order.
      * This method allows to compute, for example, so called read-coverage profiles.
      *
-     * Input: <internal pointer>, use initMoveLeft() to initialize.
+     * Input: <internal value>, use initMoveLeft() to initialize.
      * Output: Suffix array range of the preceeding read position. 
      *         After the last step, subsequent calls return an empty SA range.
      */
     sa_range moveLeft(ulong &) const;
     /**
+     * Move left operation for arbitrary patterns
+     *
+     * Allows an efficient way to step over each k-mer in any given string.
+     *
+     * Input: <internal pointer>, use initMoveLeft() to initialize, and
+     *        String that was used to initialize the internal pointer.
+     * Output: Suffix array range of the preceeding position. 
+     *         Range can be empty if the k-mer is not found in the index.
+     *         After the last step, subsequent calls return an empty SA range.
+     */
+    sa_range moveLeft(internal_pointer &, uchar const *) const;
+
+    /**
      * Initialize move left
+     *
+     * Returns an internal value that corresponds to the end
+     * of the given read.
+     *
+     * Input: Read number
+     * Output: <internal value> that points to the last k-mer of the given read.
+     */
+    ulong initMoveLeft(unsigned) const;
+    /**
+     * Initialize move left for arbitrary pattern
      *
      * Returns <internal pointer> that corresponds to the end
      * of the given read.
      *
-     * Input: Read number
-     * Output: <internal pointer> that points to the last k-mer of the given read.
+     * Input: Arbitrary string, assuming '\0'-terminated
+     * Output: <internal pointer> that points to the last k-mer of the given pattern.
      */
-    ulong initMoveLeft(unsigned) const;
+    internal_pointer initMoveLeft(uchar const *) const;
 
     /**
      * Q1 In which reads does k-mer occur?

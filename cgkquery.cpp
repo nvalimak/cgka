@@ -17,15 +17,39 @@ void print_usage(char const *name)
          << "Sample program to test out CGkArrays. Check README for more information." << endl;
 }
 
-/**
- * Debug test
- */
+// FIXME Clean up. Use for debugging only.
 bool equalVectors(CGkArray::position_vector const & vector1, CGkArray::position_vector const &vector2)
 {
     if ( vector1.size() != vector2.size() )
         return false;
 
     return std::equal ( vector1.begin(), vector1.end(), vector2.begin() );
+}
+
+// FIXME Clean up. Use for debugging only.
+void revstr(uchar *t, ulong n)
+{
+    uchar c;
+    for (ulong i = 0; i < n / 2; ++i) {
+        c = t[i];
+        t[i] = t[n - i - 1];
+        t[n - i - 1] = c;
+    }
+}
+
+// FIXME Clean up. Use for debugging only.
+void complstr(uchar *t, ulong n)
+{
+    for (ulong i = 0; i < n; ++i) {
+        switch (t[i])
+        {
+        case 'A': t[i] = 'T'; break;
+        case 'T': t[i] = 'A'; break;
+        case 'C': t[i] = 'G'; break;
+        case 'G': t[i] = 'C'; break;
+        default:  t[i] = 'N'; break;
+        }
+    }
 }
 
 int main(int argc, char **argv) 
@@ -141,13 +165,13 @@ int main(int argc, char **argv)
     {
         unsigned readno = 0;
         ulong readpos = tc->getLength(readno) - tc->getGkSize() - 1;
-        ulong tmp = tc->initMoveLeft(readno); // Initialize <internal pointer> for the given read n:o
+        ulong tmp = tc->initMoveLeft(readno); // Initialize <internal value> for the given read n:o
         CGkArray::sa_range sar = tc->moveLeft(tmp); // Get the SA range of the last k-mer
         while (sar.first <= sar.second) // End of the traversal is signaled by an empty SA range
         { 
             cout << "At read " << readno << " position " << readpos << " coverage is " << tc->countReads(sar) << endl;
             
-            // Take one step left (using <internal pointer>)            
+            // Take one step left (using <internal value>)            
             sar = tc->moveLeft(tmp);
             --readpos;
         }
@@ -166,24 +190,26 @@ int main(int argc, char **argv)
         unsigned readno = 0;
         // Retrieve the read sequence from the index, user must delete [] the buffer
         uchar *read = tc->getRead(readno);
-        cerr << "read = " << read << endl;
-        ulong readpos = tc->getLength(readno) - tc->getGkSize() - 1;
+        unsigned l = tc->getLength(readno) - 1;
+        ulong readpos = l - tc->getGkSize() + 1;
 
-
-        ulong tmp = tc->initMoveLeft(read); // Initialize <internal pointer> for the given read n:o
-        CGkArray::sa_range sar = tc->moveLeft(tmp); // Get the SA range of the last k-mer
-        while (sar.first <= sar.second) // End of the traversal is signaled by an empty SA range
+        // Rev. compl. the given read
+        revstr(read, l);
+        complstr(read, l);
+        
+        // Initialize <internal pointer> for an arbitrary pattern
+        CGkArray::internal_pointer tmp = tc->initMoveLeft(read); 
+        CGkArray::sa_range sar = tc->moveLeft(tmp, read); // Get the SA range of the last k-mer
+        while (readpos)
         { 
-            cout << "At read " << readno << " position " << readpos << " coverage is " << tc->countReads(sar) << endl;
-            
-            // Take one step left (using <internal pointer>)            
-            sar = tc->moveLeft(tmp);
             --readpos;
+            cout << "At reverse complemented read " << readno << " position " << readpos 
+                 << " coverage is " << tc->countReads(sar) << endl;
+            // Take one step left (using <internal pointer>)            
+            sar = tc->moveLeft(tmp, read);
         }
         assert(readpos == 0); // Arrived at the first position of the read
         delete [] read;
-
-        return 1; // FIXME remove
     }
 
 

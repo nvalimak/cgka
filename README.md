@@ -14,6 +14,15 @@ Acknowledgments
 This is joint work with <a href="http://www.lirmm.fr/~rivals/">Eric Rivals</a> (CRNS/LIRMM, France).
 The BWT construction algorithm is based on <a href="https://github.com/lh3/ropebwt">ropebwt/BCR</a> by Heng Li.
 
+Change log
+----
+
+2) Added an example how to traverse over all k-mers in arbitrary query patterns. This functionality allows e.g. to compute the k-mer coverage for any read and its reverse complement.
+
+1) Added some missing functionality/methods, including efficient support for traversing over all the k-mers in a given read (see cgkarray.cpp for an example).
+
+0) First public release.
+
 
 TODO
 ----
