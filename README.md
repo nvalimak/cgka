@@ -26,6 +26,7 @@ TODO
 
 Basic usage
 ----
+0) git clone https://github.com/nvalimak/cgka.git
 
 1) Compile the software by issuing the command `make'.
 
