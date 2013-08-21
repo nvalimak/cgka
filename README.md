@@ -9,6 +9,12 @@ Symposium on Bioinformatics Research and Applications (ISBRA 2013),
 Springer Verlag, LNBI 7875, pp. 237-248, May 20-22, 2012.
 
 
+Acknowledgments
+----
+This is joint work with <a href="http://www.lirmm.fr/~rivals/">Eric Rivals</a> (CRNS/LIRMM, France).
+The BWT construction algorithm is based on <a href="https://github.com/lh3/ropebwt">ropebwt/BCR</a> by Heng Li.
+
+
 TODO
 ----
 
