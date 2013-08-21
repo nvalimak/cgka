@@ -2,7 +2,7 @@
 #PARALLEL_FLAGS = -DPARALLEL_SUPPORT -fopenmp
 #PARALLEL_LIB = -lgomp
 CC = g++
-LIBRLCSAPATH = incbwt/
+LIBRLCSAPATH = rlcsa/
 LIBCDSPATH = libcds/
 # FIXME -fpermissive is needed for <bcr-demo.o>
 CPPFLAGS = -Wall -I$(LIBCDSPATH)includes/ -I$(LIBRLCSAPATH) -g -DMASSIVE_DATA_RLCSA $(PARALLEL_FLAGS) -std=c++0x -fpermissive -O3 -DNDEBUG
