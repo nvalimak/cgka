@@ -1,3 +1,7 @@
+builder
+cgkquery
+*.cgka
+*.cgka_map
 .*.swp
 *.o
 *.a
