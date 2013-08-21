@@ -9,23 +9,17 @@ Symposium on Bioinformatics Research and Applications (ISBRA 2013),
 Springer Verlag, LNBI 7875, pp. 237-248, May 20-22, 2012.
 
 
---------------------------------------------------------------------------------
 TODO
+----
 
-[x] Integrate ropebwt (BCR) for the BWT construction.
-[x] Update the '--help' information in both builder.cpp and cgkquery.cpp.
-[x] Mapping between text position and (read id, read position).
-
-[ ] Support for FASTQ and FASTA inputs.
-[ ] Use BCR+LCP for the B_lcp construction. (See e.g. Markus J. Bauer, 
+* Support for FASTQ and FASTA inputs.
+* Use BCR+LCP for the B_lcp construction. (See e.g. Markus J. Bauer, 
     Anthony J. Cox, Giovanna Rosone, Marinella Sciortino: Lightweight LCP 
     Construction for Next-Generation Sequencing Datasets. WABI 2012: 326-337)
-[ ] Parallelize the constuction/queries.
 
 
-
---------------------------------------------------------------------------------
 Basic usage
+----
 
 1) Compile the software by issuing the command `make'.
 
@@ -38,8 +32,8 @@ Basic usage
    `./cgkquery -v -q 100 input.txt'.
 
 
---------------------------------------------------------------------------------
 Brief summary of the CGkArray.h interface
+----
 
 For construction, see builder.cpp for an example.
 
