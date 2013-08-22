@@ -1,13 +1,9 @@
 /**
  * Copyright (c) 2013 Heng Li
  *
- * Notice: No license was given for this work, thus, it is outside
- * the license given in the LICENSE file. GitHub Terms of service [1]
- * allow anyone to view and fork public repositories.
- * This file was forked from [2].
- *
- * [1] https://help.github.com/articles/github-terms-of-service
- * [2] https://github.com/lh3/ropebwt, Accessed on August 7, 2013.
+ * Notice: This work is under the MIT License; see 
+ *         https://github.com/lh3/ropebwt and bcr.h 
+ *         for license details (Accessed on August 22, 2013).
  */
 #include <stdlib.h>
 #include <stdint.h>
