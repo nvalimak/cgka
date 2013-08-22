@@ -9,11 +9,6 @@ Symposium on Bioinformatics Research and Applications (ISBRA 2013),
 Springer Verlag, LNBI 7875, pp. 237-248, May 20-22, 2012.
 
 
-Acknowledgments
-----
-This is joint work with <a href="http://www.lirmm.fr/~rivals/">Eric Rivals</a> (CRNS/LIRMM, France).
-The BWT construction algorithm is based on <a href="https://github.com/lh3/ropebwt">ropebwt/BCR</a> by Heng Li.
-
 Change log
 ----
 
@@ -75,3 +70,19 @@ Queries return either a pair <read number, read position> or a vector of said pa
 
 cgkarray.cpp contains an example for computing a read-coverage profile
 by traversing all the k-mers in a given read.
+
+Acknowledgments
+----
+This is joint work with <a href="http://www.lirmm.fr/~rivals/">Eric Rivals</a> (CRNS/LIRMM, France).
+The BWT construction algorithm is based on <a href="https://github.com/lh3/ropebwt">ropebwt/BCR</a> by Heng Li.
+
+This Software includes an implementation of the algorithm published by Bauer et al.
+Markus J. Bauer, Anthony J. Cox and Giovanna Rosone: Lightweight BWT Construction
+for Very Large String Collections. Lecture Notes in Computer Science 6661
+(Proceedings of the 22nd Annual Conference on Combinatorial Pattern Matching),
+2011, pp.219-231]. Intellectual property rights in the algorithm are owned and
+protected by Illumina Cambridge Ltd. and/or its affiliates (“Illumina”).
+Illumina is not a contributor or licensor under this GPL license and
+retains all rights, title and interest in the algorithm and intellectual
+property associated therewith. No rights or licenses to Illumina intellectual
+property, including patents, are granted to you under this license.
